@@ -1,5 +1,3 @@
-# Using an In-Circuit Debugger with a Naze32 (and variants)
-
 Debugging a naze32 is easiest with an ST-Link V2.  You can find these on Amazon and other websites. The following guide will get you up and running with QtCreator and the in-circuit debugger.
 
 !!! warning
@@ -8,7 +6,7 @@ Debugging a naze32 is easiest with an ST-Link V2.  You can find these on Amazon 
 !!! warning
     It appears that perhaps debugging only works with Ubuntu 16.04 because of some issues with gdb-py and the "textinfo" tool in 14.04.
 
-## Add User to Dailout Group
+## Add user to dialout group
 
 First, make sure you are in the `dialout` group:
 
@@ -46,7 +44,7 @@ Categories=Qt;Development;IDE;
 InitialPreference=9
 ```
 
-## Install openocd
+## Install OpenOCD
 
 Open OCD (On-Chip-Debugger) is the software that will control the debugger.  We are going to install the version that is configured to work as a plugin for the eclipse IDE.  To get this version, go to the **[releases](https://github.com/gnuarmeclipse/openocd/releases)** page of the OpenOCD github page and download the latest `.tgz` file
 
@@ -94,7 +92,7 @@ sudo apt-get update
 sudo apt-get install libpython2.7:i386
 ```
 
-## Configure QtCreator for ARM Development
+## Configure QtCreator for ARM development
 
 Open up the new QtCreator you just installed (make sure it's the new one, and not the version you get from `apt-get`)
 
@@ -143,7 +141,7 @@ Go to the Bare Metal Plugin
 ![configuring_stlink](images/configuring_STLink.png)
 
 
-### Build the new Development Kit
+### Build the new development kit
 
 * Tools -> Options -> Build & Run -> Kits -> Add
 * Name: ARM
@@ -156,11 +154,11 @@ Go to the Bare Metal Plugin
 ![ARM_kit](images/ARM_kit.png)
 
 
-## Test the Debugger
+## Test the debugger
 
 Here are the instructions for a F1 target.  The instructions are very similar for an F4, just choose the correct `.elf` file.
 
-### Turn on Debugger
+### Turn on debugger
 
 Connect the Debugger to your flight controller.  Here is the pinout for the Flip32 and flip32+
 ![flip32 pinout](http://www.dronetrest.com/uploads/db5290/694/14344b7ed01cb324.jpg)
@@ -169,13 +167,13 @@ Plug in the debugger and start openocd (you'll need sudo privileges)
 
 `sudo start_openocd_f1`
 
-### Build the Correct Example Code
+### Build the correct example code
 
 * Import Existing Project
 * Open the root of the firmware
 * Do _**not**_ add .creator files to the Git repository
 
-### Configure the Build Environment
+### Configure the build environment
 
 * Go to the Projects Tab on the left hand side
 * Switch to the ARM Kit we just created

@@ -1,18 +1,18 @@
-# Parts list
+## Parts list
 
 To use ROSflight to its full potential, you will need the following parts on your MAV (Minature Aerial Vehicle).  ROSflight supports both multirotor and fixedwing vehicles.
 
-1. Aircraft Frame, Motor(s), ESC(s), Battery and Propeller(s)
-2. Flight Controller (FC)
+1. Aircraft frame, motor(s), ESC(s), battery and propeller(s)
+2. Flight controller (FC)
 3. Any external sensors
-4. Vibration Isolation for FC
-5. Onboard Computer
-6. Wi-Fi Router and Dongle
+4. Vibration isolation for FC
+5. Onboard computer
+6. Wi-Fi router and dongle
 7. RC transmitter and receiver
 8. Laptop or base station computer
 9. Joystick (Xbox controller)
 
-## Frame, Motors, ESCs, Battery and Propeller
+### Frame, motors, ESCs, battery and propeller
 
 We do not officially support any specific multirotor or airplane frame, motor, ESC, Battery or Propeller combination.  There are a lot of great resources for building your own MAV, and there are a lot of great kits out there that have all of these parts.
 
@@ -26,14 +26,14 @@ Some things to keep in mind as you design or build your MAV.
 * ESCs will need to be calibrated from 2000 to 1000 us
 
 
-## Flight Controller
+### Flight controller
 
 ROSflight is best supported on the Openpilot Revolution from [hobbyking.com](https://hobbyking.com/en_us/openpilot-cc3d-revolution-revo-32bit-flight-controller-w-integrated-433mhz-oplink.html?___store=en_us).  It works on most variants of the revo and naze32 flight controller.  Configuring a new board is relatively straight-forward, assuming that the board uses an STM32F4xx or STM32F1xx processor.
 
 !!! warning
     We have seen some problems using off-brand versions of flight controllers because there are fake versions of accelerometers which can mess with the firmware; try to avoid those if you can.
 
-## External Sensors
+### External sensors
 
 Additional Sensors you may want for your ROSflight setup include:
 
@@ -43,7 +43,7 @@ Additional Sensors you may want for your ROSflight setup include:
 
 The I2C sonar (MB124X) is also supported, but PWM sonars are preferred (https://www.adafruit.com/product/982?gclid=CjwKCAiA47DTBRAUEiwA4luU2QSNTXTLpAU6YI31w_cgVRXgiTB6v326aibrkUAaLYFRMMUWjI5uSBoCm80QAvD_BwE).
 
-## Vibration Isolation
+### Vibration isolation
 
 It is really important to isolate your flight controller from vibrations from propellers and motors.  We recommend using small amounts of [Kyosho Zeal](https://www.amazon.com/Kyosho-Z8006-Vibration-Absorption-Sheet/dp/B002U2GS2K/ref=sr_1_1?ie=UTF8&qid=1490068378&sr=8-1&keywords=kyosho+zeal) to mount a fiberglass plate holding the FC to the MAV.  You may also want to try adding mass to the flight control board.  We have accomplished this by gluing steel washers to the fiberglass mounting plate.
 
@@ -51,7 +51,7 @@ It is really important to isolate your flight controller from vibrations from pr
 
 You may need to experiment with the amount of gel you use, how far apart the gel is spaced, and the amount of mass added to the flight control board.  The interaction of these factors is difficult to predict, therefore it takes a little bit of experimentation to get it right.
 
-## Onboard Computer
+### Companion computer
 
 The only requirement for the onboard computer is that it runs Linux 16.04, ROS, has at least one USB port, and can be carried by the aircraft.  We have had success with the following onboard computers, but by no means is this a comprehensive list, it is more by way of suggestion.
 
@@ -63,11 +63,11 @@ The only requirement for the onboard computer is that it runs Linux 16.04, ROS, 
 * Rasberry Pi 3 – Cortex A53 1.2GHz 4-core – [$36 on Amazon](https://www.amazon.com/dp/B01CD5VC92/ref=cm_sw_su_dp)
 * NVIDIA Tegra TX1 - Cortex-A57 4-core CPU, 256-core Maxwell GPU - [$435 from NVIDA](http://www.nvidia.com/object/embedded-systems-dev-kits-modules.html) (Educational Discounts Available)
 
-## Wi-Fi
+### Wi-Fi
 
 You will need Wi-Fi to communicate with your MAV when it is in the air.  ROS communicates over TCP, so it is really easy to use ROS to view what is going on in your MAV while it is flying, send commands and read sensor data.  For most applications, a standard Wi-Fi router and dongle will suffice.  For long-range applications, you may want to look into [Ubiquiti](https://www.ubnt.com/) point-to-point Wi-Fi.  (We have seen ranges over a mile with these networks)
 
-## RC Transmitter and Reciever
+### RC transmitter and reciever
 
 For RC Control, you will need a transmitter with between 6 and 8 channels.  Any additional channels will be wasted.  We require RC control for safe operation, and only support arming and disarming via RC control.
 
@@ -77,15 +77,15 @@ As of version 1.0, ROSflight only supports PPM (pulse position modulation) recei
 * Receiver – [FrSky D4R-II (24.99 on getfpv.com)](https://www.getfpv.com/frsky-d4r-ii-4ch-2-4ghz-accst-receiver-w-telemetry.html)
 
 
-## Laptop or Base Station Computer
+### Laptop or base station computer
 
 You will need a laptop which can run Ubuntu 16.04 and ROS to communicate with the MAV over WiFi.  If you are new to Linux, and want to also use windows, I would recommend dual booting your computer rather than using a virtual machine.
 
-## Joystick
+### Joystick
 
 The Joystick is not technically a required component, because it is possible to control your MAV over command line. It does make things easier, however.  We recommend XBOX 360 controllers and have default parameters set for the XBOX configuration.  Other joysticks are supported, but you may need to perform custom axis and button mappings.
 
-# Wiring diagram
+## Wiring diagram
 
 Below is an example wiring diagram for a multirotor using a MSI Cubi as an onboard computer.  This diagram also includes the motor power switch, which allows for the sensors, flight controller and onboard computer to be power on while the motors are off.  This is a safer way to work on the aircraft as the motors are unable to spin while the switch is off.
 
@@ -93,7 +93,7 @@ Below is an example wiring diagram for a multirotor using a MSI Cubi as an onboa
 
 Your needs will likely be slightly different than what is shown.  This is meant as an example only and can be adapted to fit your needs.
 
-# Motor layouts
+## Motor layouts
 
 The desired mixer can be chosen by setting the the `MIXER` parameter to the following values:
 
@@ -119,11 +119,11 @@ The **ESC calibration** mixer directly outputs the throttle command equally to e
 ![Mixer_2](images/mixers_2.png)
 
 
-# Connecting to the Flight Controller
+## Connecting to the flight controller
 
 The flight controller communicates with the onboard computer over a serial link.  ROSflight only supports one serial connection at a time and by default should be the serial link connected to the USB connector on the board.
 
-## Using secondary serial links (example: use with telemetry radio)
+### Using secondary serial links (example: use with telemetry radio)
 
 In the case of an F4 flight controller, which has a USB peripheral, the highest bandwidth connection will be the USB connector, however UART3 can be also used to communicate with the onboard computer if you desire a more secure connection (micro USB connectors have been known to come off in high vibrations) or if you would like to use a telemetry radio for remote control.  
 

@@ -1,5 +1,3 @@
-# Autonomous flight
-
 One of the core functionalities of the ROSflight autopilot is to allow the onboard computer to send control setpoints to the embedded flight controller. These setpoints would typically be computed by a controller running as a ROS node, normally on the onboard computer.
 
 ## Provide control from an onboard computer
@@ -76,6 +74,6 @@ I would then publish this message to the `/command` topic to forward it to the e
 !!! note
     If the flight controller does not receive a new command for certain period of time, it will ignore the old commands and revert to RC control. The length of this timeout period is set by the `OFFBOARD_TIMEOUT` parameter.
 
-## Fly waypoints with ros_plane or ros_copter
+## Fly waypoints with ROSplane or ROScopter
 
 Waypoint following is not supported natively by the ROSflight stack. However, the [ROSplane](https://github.com/byu-magicc/ros_plane) and [ROScopter](https://github.com/byu-magicc/ros_copter) projects are good example implementations of how to achieve this using ROSflight. They also provide good examples of how you might go about integrating your own guidance or control algorithms with the ROSflight stack.

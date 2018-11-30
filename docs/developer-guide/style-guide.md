@@ -1,12 +1,10 @@
-# Style Guide
-
 Any contributions to the firmware should adhere to the following style guidelines
 
-## White space and Line Endings
+## White space and line endings
 
 Please try not to commit anything that only changes white space or line endings. To check if that's going to happen, run `git diff --check` before you stage your files. Git will warn you about obnoxious changes. Please fix them.
 
-## Code Style
+## Code style
 The following ROSflight code style is based on the [ROS C++ style guide](http://wiki.ros.org/CppStyleGuide).
 ROSflight uses the C++11 standard.
 
@@ -50,7 +48,7 @@ if (i > 2)
 
 There should be a space between `if`, `for`, or `while` and the condition, e.g. `while (true)`, not `while(true)`.
 
-### Naming Conventions
+### Naming conventions
 
 * Class names should be capitalized with no spaces (i.e. `StateManager`).
 * Member variables should contain a post-pended underscore (i.e. `data_`).
@@ -58,7 +56,7 @@ There should be a space between `if`, `for`, or `while` and the condition, e.g. 
 * Integer types should be defined using the `cstdint` convention (i.e. `uint8_t`, `int64_t`, `float` ...).
 * Boolean values should be assigned `true` or `false`, not `0` and `1`.
 
-### Function Arguments
+### Function arguments
 Primitive data types (`int`, `float`, etc.) should always be passed by value. Other types (e.g. classes) should be passed by reference and should maintain proper const-correctness. Arguments that are modified by the function should be passed by pointer instead of reference, to make the fact that the argument will be changed clearer in the calling code. For example:
 
 ``` C++
@@ -154,7 +152,7 @@ Struct type names should be in CamelCase.
 
 The use of global variables should be limited to when absolutely necessary (such as linking to interrupt routines or hardware peripherals).  This should only occur in board support layers and not in the core ROSflight libary code.
 
-### Include Order
+### Include order
 
 Include files at the top of your file in the following order:
 

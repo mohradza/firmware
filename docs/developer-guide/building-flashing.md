@@ -1,5 +1,3 @@
-# Building and Flashing the firmware
-
 These documents are designed to help developers get up and running with developing new features and understanding the internals of the firmware.  Development is currently supported only on Ubuntu Linux 16.04.
 
 ## Building firmware from source

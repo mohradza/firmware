@@ -1,5 +1,3 @@
-# Writing Documentation
-
 All documentation for the entire ROSflight stack (both firmware and ROS code) belongs in this "ReadTheDocs" webpage.  Here I will explain quickly how to build the documentation on your own local computer so you can view changes as you write and contribute to the documentation.
 
 ## Install mkdocs and latex support

@@ -1,5 +1,3 @@
-# Installing/setting up ROS
-
 You will need to install ROS on both the onboard computer and base station laptop. Check out the [Official ROS Installation](http://wiki.ros.org/ROS/Installation) page for details on how to do this.
 
 Currently only the long-term support [ROS kinetic](http://wiki.ros.org/kinetic/Installation) release is supported, with the recommended operating system being Ubuntu 16.04. If storage is limited on your onboard computer, you can install the bare-bones ROS package (`ros-kinetic-ros-base`) instead of the full desktop version.
@@ -74,7 +72,7 @@ Replace `/dev/ttyACM0` with the port your flight controller is connected to. The
 
 For details on all parameters, topics, and services related to the `rosflight_io` node, refer to the documentation on the [ROS wiki](http://wiki.ros.org/rosflight).
 
-# Jetson TX2
+## Jetson TX2
 
 It is likely that your flip32/naze32 board doesn't work correctly out of the box with the TX2. To fix this you need to build some drivers in with the kernel. This process is pretty straight-forward.
 
@@ -84,4 +82,3 @@ To build the kernel with additional USB drivers, follow the instructions and vid
 - USB CP210x family of UART Bridge Controllers
 
 After following the instructions to add these drivers, reboot your TX2 and your USB devices should show up in /dev/ttyUSB? or /dev/ttyACM? as you would expect.
-

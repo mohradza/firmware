@@ -1,5 +1,3 @@
-# Autopilot Setup
-
 ## Compatible hardware
 
 As of January 2018 ROSflight is only supported on flight controllers with STM32F103 and STM32F405 processors, specifically, the revo, naze32, flip32.  Both the 6-DOF and 10-DOF versions of each board are fully supported.  We have had most success with revo boards purchased from [hobbyking](https://hobbyking.com/en_us/openpilot-cc3d-revolution-revo-32bit-flight-controller-w-integrated-433mhz-oplink.html?___store=en_us).  We have had weird issues with knock-off boards from Chinese vendors.
@@ -36,7 +34,7 @@ echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="df11", MODE=
     sudo apt-get purge modemmanager
     ```
 
-## Flashing F4 boards from Command Line
+## Flashing F4 boards from command line
 
 You can also use dfu-util to flash firmware.  This is helpful if you need (or prefer) a command-line interface.
 
@@ -57,7 +55,7 @@ sudo apt install dfu-util
 
 
 
-## Flashing F1 boards from Command Line
+## Flashing F1 boards from command line
 
 You can also use stm32flash to flash firmware to F1-based boards.
 

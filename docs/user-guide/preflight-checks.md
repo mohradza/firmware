@@ -1,8 +1,6 @@
-# Pre-Flight Checklist
-
 This is an example of a ROSflight pre-flight checklist.  You will likely need to augment this with checks specific to your hardware and the code running on the onboard computer.
 
-## Generic Checklist
+## Generic checklist
 
 ### Before powering up motors
 - ROS is running on onboard computer, communicating with base station
@@ -21,7 +19,7 @@ This is an example of a ROSflight pre-flight checklist.  You will likely need to
 - Wire-wiggle test (wiggle all wires to look for bad connections)
 - Parameter Check (if using a fixed wing, there are about 8 parameter you will need to change from default  )
 
-### After Powering Up Motors
+### After powering up motors
 
 !!! warning
     Be sure flight controller is disarmed before powering up motors!!!
@@ -31,9 +29,9 @@ This is an example of a ROSflight pre-flight checklist.  You will likely need to
 - Response to offboard controls
 
 
-## ROSplane Checklist
+## ROSplane checklist
 
-### Before Leaving for the Flying Field
+### Before leaving for the flying field
 - ROS is running and communicating on both the base station and onboard computer
 - Set fixed wing parameters
 - Wireless network setup is working

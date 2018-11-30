@@ -1,5 +1,3 @@
-# Running Simulations in Gazebo
-
 One useful tool that comes with rosflight is the ability to perform software-in-the-loop (SIL) simulations of the ROSflight firmware in gazebo.
 
 ## Architecture of the SIL simulation
@@ -15,7 +13,7 @@ The following table summarizes the correlation between connections in hardware a
 | Motors                                  | PWM          | Gazebo Plugin                           |
 | Sensors                                 | SPI/I2C      | Gazebo Plugin                           |
 
-## Quick Start Guide To SIL Simulation
+## Quick start guide to SIL simulation
 
 * create a catkin workspace
 

@@ -1,19 +1,17 @@
-# Code Architecture
-
 The firmware is divided into two main components: the _ROSflight library_, and a collection of _board implementations_.
 This division is intended to allow the same core flight code to run on any processor or platform, either an embedded flight controller (such as the Naze32 or Revo) or a desktop environment for a software-in-the-loop (SIL) simulation. The interface between these two components is called the _hardware abstraction layer_.
 This architecture is illustrated in the following diagram:
 
 ![hardware abstraction layer](images/HAL.svg)
 
-## ROSflight Core Library
+## ROSflight core library
 
 The ROSflight library consists of all the code in the `include` and `src` directories of the firmware repository.
 This includes the code for the what is termed the "flight stack," which consists of the core components (such as the estimator, controller, communication link, etc.) required for flight.
 It also includes the interface definition for the hardware abstraction layer, which is defined by the abstract `Board` class in `include/board.h`.
 External libraries (such as MAVLink) are contained in the `lib` folder.
 
-## Board Abstraction
+## Board abstraction
 
 The hardware abstraction implementations are contained in the `board` directory, organized in subdirectories according to the hardware driver layer.
 The `boards/airbourne` directory uses drivers for boards using the STM32F4 processor, while the `boards/breezy` directory uses drivers for STM32F1 processors.
@@ -75,7 +73,7 @@ It supports the getting and setting of integer and floating point parameters, an
 Setting and getting of parameters from the onboard computer is done through the MAVLink interface.
 While no other data flow lines are shown on the diagram, all of the other modules interact with the parameter server.
 
-### Comm Manager
+### Comm manager
 This module handles all serial communication between the flight controller and onboard computer.
 This includes streaming data and receiving offboard control setpoints and other commands from the computer.
 This module primarily collects data from the sensors, estimator, state manager, and parameters modules, and sends offboard control setpoints to the command manager and parameter requests to the parameter server.

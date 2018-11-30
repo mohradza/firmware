@@ -1,6 +1,6 @@
 This page provides an overview of the basic operation of the ROSflight firmware and the concepts behind the behaviors.
 
-# Companion computer
+## Companion computer
 
 ROSflight is primarily intended to be used with an onboard companion computer running ROS.
 The ROS interface is provided by the [rosflight_io](http://wiki.ros.org/rosflight) node.
@@ -13,7 +13,7 @@ However, we also refer to the control setpoints passed from that computer to the
 The control is "offboard" from the perspective of the flight controller, even though the computer providing those commands is "onboard" the vehicle.
 Perhaps not the greatest terminology; but hopefully this helps clear up potential confusion.
 
-# RC safety pilot
+## RC safety pilot
 
 ROSflight is designed for use with offboard control from experimental and research code.
 As such, it provides several mechanisms for an RC safety pilot to intervene if something goes wrong with the control setpoints coming from the onboard computer:
@@ -22,7 +22,7 @@ As such, it provides several mechanisms for an RC safety pilot to intervene if s
   - **Stick deviations:** If a stick is deviated from its center position, then that channel is overridden by RC control. This allows the safety pilot to take control without flipping a switch, or to provide a momentary correction on a single axis. The fraction of stick travel needed to active RC override is controlled by the `RC_OVRD_DEV` parameter. The amount of time that the override remains active after the sticks returned to center is controlled by the `OVRD_LAG_TIME` parameter.
   - **Minimum throttle:** By default, the flight controller takes the minimum of the two throttle commands from RC and offboard control setpoints. This allows the safety pilot to drop the throttle quickly if needed. This behavior can be turned on or off with the `MIN_THROTTLE` parameter.
 
-# Arming, errors & failsafe
+## Arming, errors & failsafe
 
 The flight controller can only be armed and disarmed via RC control.
 Two mechanisms are provided: sticks (left stick down and right to arm, down and left to disarm) and switch.
@@ -44,7 +44,7 @@ The following is a simplified version of the finite state machine that defines l
 
 ![Arming FSM](images/arming-fsm-simplified.svg)
 
-# LEDs
+## LEDs
 
 The meaning of the various LEDs is summarized in the following tables. The colors of the LEDs may change depending on your specific board:
 

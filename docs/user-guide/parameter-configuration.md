@@ -1,5 +1,3 @@
-# Parameters
-
 The ROSflight firmware has several dozen parameters which it uses to customize performance.  Parameters are considered semi-static variables.  That is, parameters do not change during flight, but they may change between vehicles.  Examples of parameters you may wish to change are:
 
 * Fixed-wing vehicle flag
@@ -10,9 +8,9 @@ The ROSflight firmware has several dozen parameters which it uses to customize p
 
 and so on.  All parameter access is enabled via ROS services advertised by `rosflight_io` while the flight controller is connected.
 
-## Parameter Interface
+## Parameter interface
 
-### Getting Parameter Values
+### Getting parameter values
 
 Sometimes it is handy to ask the flight controller what the current value of a parameter is.  This is accomplished using the `param_get` service.  As an example, let's retrieve the roll angle controller P gain.
 
@@ -27,7 +25,7 @@ exists: True
 value: 0.15000000596
 ```
 
-### Changing Parameters
+### Changing parameters
 
 Parameters are changed via the `param_set` service.  As an example, let's change the roll angle controller P gain.  (I will assume that the flight controller is connected and `rosflight_io` is running in the root namespace).
 
@@ -43,7 +41,7 @@ You should get a prompt from `rosflight_io` saying
 
 Notice that the parameters have been set, but not saved.  Parameter changes take effect immediately, however they will not persist over a reboot unless you *write* them to the non-volatile memory.  This brings us to the next task.
 
-### Writing Parameters
+### Writing parameters
 
 To ensure that parameter values persist between reboots, you must write the parameters to the non-volatile memory.  This is done by calling `param_write`
 
@@ -59,7 +57,7 @@ rosservice call /param_write
 !!! error
     Parameter writing can only happen if the flight controller is disarmed.  If the param write failed for some reason, you may want to make sure you are disarmed and try again.
 
-### Backing Up and Loading Parameters from File
+### Backing up and loading parameters from file
 
 It is good practice to backup your parameter configuration in case you have to re-flash your firmware or you want to share configurations between vehicles.  We can do this via the `param_save_to_file` and `param_load_from_file` services.
 
@@ -78,7 +76,7 @@ rosservice call /param_load_from_file ~/parameters.yml
 Again, you must specify the absolute file name of the file to be loaded
 
 
-## Fixed-Wing Parameter Configuration
+## Fixed-wing parameter configuration
 
 Because ROSflight ships with default parameters for multirotors, you will probably want to change the following parameters if you want to fly a fixed wing aircraft.
 
@@ -97,13 +95,9 @@ Because ROSflight ships with default parameters for multirotors, you will probab
 | CAL_GYRO_ARM | Calibrate gyros when arming - generally only for multirotors | int |  false | 0 | 1 |
 
 
-## Description of all Parameters
+## Description of all parameters
 
 This is a list of all parameters on ROSflight, their types, default values, and minimum and maximum recommended setting:
-
-# Parameter descriptions
-
-# Parameter descriptions
 
 | Parameter | Description | Type | Default Value | Min | Max |
 |-----------|-------------|------|---------------|-----|-----|
