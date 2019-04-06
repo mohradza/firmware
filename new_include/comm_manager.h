@@ -88,7 +88,6 @@ private:
     void stream(uint64_t now_us);
     void set_rate(uint32_t rate_hz);
 
-  private:
     uint32_t period_us_;
     uint64_t next_time_us_;
     std::function<void(void)> send_function_;
@@ -103,6 +102,8 @@ private:
   void command_callback(CommLink::Command command);
   void timesync_callback(int64_t tc1, int64_t ts1);
   void offboard_control_callback(const CommLink::OffboardControl& control);
+  void attitude_correction_callback(const turbomath::Quaternion &q);
+  void heartbeat_callback(void);
 
   void send_heartbeat(void);
   void send_status(void);
@@ -115,6 +116,7 @@ private:
   void send_sonar(void);
   void send_mag(void);
   void send_low_priority(void);
+  void send_error_data(void);
 
   // Debugging Utils
   void send_named_value_int(const char *const name, int32_t value);
@@ -123,17 +125,17 @@ private:
   void send_next_param(void);
 
   Stream streams_[STREAM_COUNT] = {
-    Stream(1000000, std::bind(&CommManager::send_heartbeat, this)),
-    Stream(1000000, std::bind(&CommManager::send_status, this)),
-    Stream(200000,  std::bind(&CommManager::send_attitude, this)),
-    Stream(1000,    std::bind(&CommManager::send_imu, this)),
-    Stream(200000,  std::bind(&CommManager::send_diff_pressure, this)),
-    Stream(200000,  std::bind(&CommManager::send_baro, this)),
-    Stream(100000,  std::bind(&CommManager::send_sonar, this)),
-    Stream(6250,    std::bind(&CommManager::send_mag, this)),
-    Stream(0,       std::bind(&CommManager::send_output_raw, this)),
-    Stream(0,       std::bind(&CommManager::send_rc_raw, this)),
-    Stream(5000,    std::bind(&CommManager::send_low_priority, this)),
+    Stream(0,     [this]{this->send_heartbeat();}),
+    Stream(0,     [this]{this->send_status();}),
+    Stream(0,     [this]{this->send_attitude();}),
+    Stream(0,     [this]{this->send_imu();}),
+    Stream(0,     [this]{this->send_diff_pressure();}),
+    Stream(0,     [this]{this->send_baro();}),
+    Stream(0,     [this]{this->send_sonar();}),
+    Stream(0,     [this]{this->send_mag();}),
+    Stream(0,     [this]{this->send_output_raw();}),
+    Stream(0,     [this]{this->send_rc_raw();}),
+    Stream(20000, [this]{this->send_low_priority();})
   };
 
 public:
