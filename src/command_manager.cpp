@@ -280,12 +280,13 @@ bool CommandManager::run()
     if (RF_.board_.clock_millis() > offboard_command_.stamp_ms + 400)
     {
       // If it has been longer than 100 ms, then disable the offboard control
-      offboard_command_.F.active = false;
+      offboard_command_.F.active = true;
+      offboard_command_.F.value =  multirotor_failsafe_command_.F.value;
       offboard_command_.x.active = false;
       offboard_command_.y.active = false;
       offboard_command_.z.active = false;
-    }
-
+   }
+    
     // Perform muxing
     rc_override_  = do_roll_pitch_yaw_muxing(MUX_X);
     rc_override_ |= do_roll_pitch_yaw_muxing(MUX_Y);
