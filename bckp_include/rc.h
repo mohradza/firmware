@@ -29,85 +29,91 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
-#define ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
+#ifndef ROSFLIGHT_FIRMWARE_RC_H
+#define ROSFLIGHT_FIRMWARE_RC_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 namespace rosflight_firmware
 {
 
 class ROSflight;
 
-class StateManager
+class RC
 {
 
 public:
-  struct State
+  enum Stick
   {
-    bool armed;
-    bool failsafe;
-    bool error;
-    uint16_t error_codes;
+    STICK_X,
+    STICK_Y,
+    STICK_Z,
+    STICK_F,
+    STICKS_COUNT
   };
 
-  enum Event
+  enum Switch
   {
-    EVENT_INITIALIZED,
-    EVENT_REQUEST_ARM,
-    EVENT_REQUEST_DISARM,
-    EVENT_RC_LOST,
-    EVENT_RC_FOUND,
-    EVENT_ERROR,
-    EVENT_NO_ERROR,
-    EVENT_CALIBRATION_COMPLETE,
-    EVENT_CALIBRATION_FAILED,
+    SWITCH_ARM,
+    SWITCH_ATT_OVERRIDE,
+    SWITCH_THROTTLE_OVERRIDE,
+    SWITCH_ATT_TYPE,
+    SWITCHES_COUNT
   };
 
-  enum : uint16_t
-  {
-    ERROR_NONE = 0x0000,
-    ERROR_INVALID_MIXER = 0x0001,
-    ERROR_IMU_NOT_RESPONDING = 0x0002,
-    ERROR_RC_LOST = 0x0004,
-    ERROR_UNHEALTHY_ESTIMATOR = 0x0008,
-    ERROR_TIME_GOING_BACKWARDS = 0x0010,
-    ERROR_UNCALIBRATED_IMU = 0x0020,
-  };
+  RC(ROSflight& _rf);
 
-  StateManager(ROSflight& parent);
+  typedef enum
+  {
+    PARALLEL_PWM,
+    CPPM,
+  } rc_type_t;
+
   void init();
-  void run();
-
-  inline const State& state() const { return state_; }
-
-  void set_event(Event event);
-  void set_error(uint16_t error);
-  void clear_error(uint16_t error);
+  float stick(Stick channel);
+  bool switch_on(Switch channel);
+  bool switch_mapped(Switch channel);
+  bool run();
+  bool new_command();
+  void param_change_callback(uint16_t param_id);
 
 private:
   ROSflight& RF_;
-  State state_;
 
-  uint32_t next_led_blink_ms_ = 0;
-  uint32_t next_arming_error_msg_ms_ = 0;
-
-  enum FsmState
+  typedef struct
   {
-    FSM_STATE_INIT,
-    FSM_STATE_PREFLIGHT,
-    FSM_STATE_ARMED,
-    FSM_STATE_ERROR,
-    FSM_STATE_FAILSAFE,
-    FSM_STATE_CALIBRATING
-  };
+    uint8_t channel;
+    int8_t direction;
+    bool mapped;
+  } rc_switch_config_t;
 
-  FsmState fsm_state_;
-  void process_errors();
+  typedef struct
+  {
+    uint8_t channel;
+    bool one_sided;
+  } rc_stick_config_t;
 
-  void update_leds();
+  bool new_command_;
+
+  uint32_t time_of_last_stick_deviation = 0;
+  uint32_t time_sticks_have_been_in_arming_position_ms = 0;
+  uint32_t prev_time_ms = 0;
+  uint32_t last_rc_receive_time = 0;
+
+  rc_stick_config_t sticks[STICKS_COUNT];
+  rc_switch_config_t switches[SWITCHES_COUNT];
+
+  bool switch_values[SWITCHES_COUNT];
+  float stick_values[STICKS_COUNT];
+
+  void init_rc();
+  void init_switches();
+  void init_sticks();
+  bool check_rc_lost();
+  void look_for_arm_disarm_signal();
 };
 
 } // namespace rosflight_firmware
 
-#endif // ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
+#endif // ROSLFLIGHT_FIRMWARE_RC_H

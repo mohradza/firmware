@@ -29,7 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include <stdint.h>
 
 #include "mixer.h"
@@ -40,16 +39,17 @@ namespace rosflight_firmware
 
 Mixer::Mixer(ROSflight &_rf) :
   RF_(_rf)
-{
-  mixer_to_use_ = nullptr;
-}
+{}
 
 void Mixer::init()
 {
+  RF_.params_.add_callback(std::bind(&Mixer::param_change_callback, this, std::placeholders::_1), PARAM_MOTOR_PWM_SEND_RATE);
+  RF_.params_.add_callback(std::bind(&Mixer::param_change_callback, this, std::placeholders::_1), PARAM_MOTOR_MIN_PWM);
+  RF_.params_.add_callback(std::bind(&Mixer::param_change_callback, this, std::placeholders::_1), PARAM_RC_TYPE);
+  RF_.params_.add_callback(std::bind(&Mixer::param_change_callback, this, std::placeholders::_1), PARAM_MIXER);
+
   init_mixing();
-  RF_.params_.add_callback([this](uint8_t param_id){this->param_change_callback(param_id);}, PARAM_MOTOR_PWM_SEND_RATE);
-  RF_.params_.add_callback([this](uint8_t param_id){this->param_change_callback(param_id);}, PARAM_RC_TYPE);
-  RF_.params_.add_callback([this](uint8_t param_id){this->param_change_callback(param_id);}, PARAM_MIXER);
+  init_PWM();
 }
 
 void Mixer::param_change_callback(uint16_t param_id)
@@ -76,18 +76,13 @@ void Mixer::init_mixing()
   if (mixer_choice >= NUM_MIXERS)
   {
     RF_.comm_manager_.log(CommLink::LogSeverity::LOG_ERROR, "Invalid Mixer Choice");
+    mixer_choice = 0;
 
     // set the invalid mixer flag
     RF_.state_manager_.set_error(StateManager::ERROR_INVALID_MIXER);
-    mixer_to_use_ = nullptr;
-  }
-  else
-  {
-    mixer_to_use_ = array_of_mixers_[mixer_choice];
   }
 
-
-  init_PWM();
+  mixer_to_use_ = array_of_mixers_[mixer_choice];
 
   for (int8_t i=0; i<8; i++)
   {
@@ -98,17 +93,14 @@ void Mixer::init_mixing()
 
 void Mixer::init_PWM()
 {
-  uint32_t refresh_rate = RF_.params_.get_param_int(PARAM_MOTOR_PWM_SEND_RATE);
-  if (refresh_rate == 0 && mixer_to_use_ != nullptr)
+  bool useCPPM = false;
+  if (RF_.params_.get_param_int(PARAM_RC_TYPE) == 1)
   {
-    refresh_rate = mixer_to_use_->default_pwm_rate;
+    useCPPM = true;
   }
-  int16_t off_pwm = 1000;
-
-  if (mixer_to_use_ == nullptr || refresh_rate == 0)
-    RF_.board_.pwm_init(50, 0);
-  else
-    RF_.board_.pwm_init(refresh_rate, off_pwm);
+  int16_t motor_refresh_rate = RF_.params_.get_param_int(PARAM_MOTOR_PWM_SEND_RATE);
+  int16_t off_pwm = RF_.params_.get_param_int(PARAM_MOTOR_MIN_PWM);
+  RF_.board_.pwm_init(useCPPM, motor_refresh_rate, off_pwm);
 }
 
 
@@ -135,7 +127,9 @@ void Mixer::write_motor(uint8_t index, float value)
     value = 0.0;
   }
   raw_outputs_[index] = value;
-  RF_.board_.pwm_write(index, raw_outputs_[index]);
+  int32_t pwm_us = value * (RF_.params_.get_param_int(PARAM_MOTOR_MAX_PWM) - RF_.params_.get_param_int(
+                              PARAM_MOTOR_MIN_PWM)) + RF_.params_.get_param_int(PARAM_MOTOR_MIN_PWM);
+  RF_.board_.pwm_write(index, pwm_us);
 }
 
 
@@ -150,7 +144,7 @@ void Mixer::write_servo(uint8_t index, float value)
     value = -1.0;
   }
   raw_outputs_[index] = value;
-  RF_.board_.pwm_write(index, raw_outputs_[index] * 0.5 + 0.5);
+  RF_.board_.pwm_write(index, raw_outputs_[index] * 500 + 1500);
 }
 
 
@@ -166,14 +160,6 @@ void Mixer::mix_output()
     commands.y *= RF_.params_.get_param_int(PARAM_ELEVATOR_REVERSE) ? -1 : 1;
     commands.z *= RF_.params_.get_param_int(PARAM_RUDDER_REVERSE) ? -1 : 1;
   }
-  else if(commands.F < RF_.params_.get_param_float(PARAM_MOTOR_IDLE_THROTTLE))
-  {
-    // For multirotors, disregard yaw commands if throttle is low to prevent motor spin-up while arming/disarming
-    commands.z = 0.0;
-  }
-
-  if (mixer_to_use_ == nullptr)
-    return;
 
   for (int8_t i=0; i<8; i++)
   {

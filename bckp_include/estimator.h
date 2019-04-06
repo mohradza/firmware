@@ -29,85 +29,65 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
-#define ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
+#ifndef ROSFLIGHT_FIRMWARE_ESTIMATOR_H
+#define ROSFLIGHT_FIRMWARE_ESTIMATOR_H
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <math.h>
+
+#include <turbomath/turbomath.h>
 
 namespace rosflight_firmware
 {
 
 class ROSflight;
 
-class StateManager
+class Estimator
 {
 
 public:
   struct State
   {
-    bool armed;
-    bool failsafe;
-    bool error;
-    uint16_t error_codes;
+    turbomath::Vector angular_velocity;
+    turbomath::Quaternion attitude;
+    float roll;
+    float pitch;
+    float yaw;
+    uint64_t timestamp_us;
   };
 
-  enum Event
-  {
-    EVENT_INITIALIZED,
-    EVENT_REQUEST_ARM,
-    EVENT_REQUEST_DISARM,
-    EVENT_RC_LOST,
-    EVENT_RC_FOUND,
-    EVENT_ERROR,
-    EVENT_NO_ERROR,
-    EVENT_CALIBRATION_COMPLETE,
-    EVENT_CALIBRATION_FAILED,
-  };
-
-  enum : uint16_t
-  {
-    ERROR_NONE = 0x0000,
-    ERROR_INVALID_MIXER = 0x0001,
-    ERROR_IMU_NOT_RESPONDING = 0x0002,
-    ERROR_RC_LOST = 0x0004,
-    ERROR_UNHEALTHY_ESTIMATOR = 0x0008,
-    ERROR_TIME_GOING_BACKWARDS = 0x0010,
-    ERROR_UNCALIBRATED_IMU = 0x0020,
-  };
-
-  StateManager(ROSflight& parent);
-  void init();
-  void run();
+  Estimator(ROSflight& _rf);
 
   inline const State& state() const { return state_; }
 
-  void set_event(Event event);
-  void set_error(uint16_t error);
-  void clear_error(uint16_t error);
+  void init();
+  void run();
+  void reset_state();
+  void reset_adaptive_bias();
 
 private:
+  const turbomath::Vector g_ = {0.0f, 0.0f, -1.0f};
+
   ROSflight& RF_;
   State state_;
 
-  uint32_t next_led_blink_ms_ = 0;
-  uint32_t next_arming_error_msg_ms_ = 0;
+  uint64_t last_time_;
+  uint64_t last_acc_update_us_;
 
-  enum FsmState
-  {
-    FSM_STATE_INIT,
-    FSM_STATE_PREFLIGHT,
-    FSM_STATE_ARMED,
-    FSM_STATE_ERROR,
-    FSM_STATE_FAILSAFE,
-    FSM_STATE_CALIBRATING
-  };
+  turbomath::Vector w1_;
+  turbomath::Vector w2_;
 
-  FsmState fsm_state_;
-  void process_errors();
+  turbomath::Vector bias_;
 
-  void update_leds();
+  turbomath::Vector accel_LPF_;
+  turbomath::Vector gyro_LPF_;
+
+  turbomath::Vector w_acc_;
+
+  void run_LPF();
 };
 
 } // namespace rosflight_firmware
 
-#endif // ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
+#endif // ROSFLIGHT_FIRMWARE_ESTIMATOR_H

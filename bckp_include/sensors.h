@@ -77,7 +77,6 @@ public:
   Sensors(ROSflight& rosflight);
 
   inline const Data& data() const { return data_; }
-  void get_filtered_IMU(turbomath::Vector& accel, turbomath::Vector& gyro, uint64_t& stamp_us);
 
   // function declarations
   void init();
@@ -121,12 +120,12 @@ private:
     bool init_ = false;
 
   public:
-    OutlierFilter() {}
+    OutlierFilter() {};
     void init(float max_change_rate, float update_rate, float center);
     bool update(float new_val, float *val);
   };
 
-  enum : uint8_t
+  enum LowPrioritySensors
   {
     BAROMETER,
     DIFF_PRESSURE,
@@ -144,7 +143,7 @@ private:
 
   bool calibrating_acc_flag_ = false;
   bool calibrating_gyro_flag_ = false;
-  uint8_t next_sensor_to_update_ = BAROMETER;
+  LowPrioritySensors next_sensor_to_update_ = BAROMETER;
   void init_imu();
   void calibrate_accel(void);
   void calibrate_gyro(void);
@@ -172,12 +171,6 @@ private:
   float acc_temp_sum_ = 0.0f;
   turbomath::Vector max_ = {-1000.0f, -1000.0f, -1000.0f};
   turbomath::Vector min_ = {1000.0f, 1000.0f, 1000.0f};
-
-  // Filtered IMU
-  turbomath::Vector accel_int_;
-  turbomath::Vector gyro_int_;
-  uint64_t int_start_us_;
-  uint64_t prev_imu_read_time_us_;
 
   // Baro Calibration
   bool baro_calibrated_ = false;

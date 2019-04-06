@@ -29,85 +29,81 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
-#define ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
+#ifndef ROSFLIGHT_FIRMWARE_CONTROLLER_H
+#define ROSFLIGHT_FIRMWARE_CONTROLLER_H
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#include <turbomath/turbomath.h>
+
+#include "command_manager.h"
+#include "estimator.h"
 
 namespace rosflight_firmware
 {
 
 class ROSflight;
 
-class StateManager
+class Controller
 {
-
 public:
-  struct State
+  struct Output
   {
-    bool armed;
-    bool failsafe;
-    bool error;
-    uint16_t error_codes;
+    float F;
+    float x;
+    float y;
+    float z;
   };
 
-  enum Event
-  {
-    EVENT_INITIALIZED,
-    EVENT_REQUEST_ARM,
-    EVENT_REQUEST_DISARM,
-    EVENT_RC_LOST,
-    EVENT_RC_FOUND,
-    EVENT_ERROR,
-    EVENT_NO_ERROR,
-    EVENT_CALIBRATION_COMPLETE,
-    EVENT_CALIBRATION_FAILED,
-  };
+  Controller(ROSflight& rf);
 
-  enum : uint16_t
-  {
-    ERROR_NONE = 0x0000,
-    ERROR_INVALID_MIXER = 0x0001,
-    ERROR_IMU_NOT_RESPONDING = 0x0002,
-    ERROR_RC_LOST = 0x0004,
-    ERROR_UNHEALTHY_ESTIMATOR = 0x0008,
-    ERROR_TIME_GOING_BACKWARDS = 0x0010,
-    ERROR_UNCALIBRATED_IMU = 0x0020,
-  };
+  inline const Output& output() const { return output_; }
 
-  StateManager(ROSflight& parent);
   void init();
   void run();
 
-  inline const State& state() const { return state_; }
-
-  void set_event(Event event);
-  void set_error(uint16_t error);
-  void clear_error(uint16_t error);
+  void calculate_equilbrium_torque_from_rc();
+  void param_change_callback(uint16_t param_id);
 
 private:
-  ROSflight& RF_;
-  State state_;
-
-  uint32_t next_led_blink_ms_ = 0;
-  uint32_t next_arming_error_msg_ms_ = 0;
-
-  enum FsmState
+  class PID
   {
-    FSM_STATE_INIT,
-    FSM_STATE_PREFLIGHT,
-    FSM_STATE_ARMED,
-    FSM_STATE_ERROR,
-    FSM_STATE_FAILSAFE,
-    FSM_STATE_CALIBRATING
+  public:
+    PID();
+    void init(float kp, float ki, float kd, float max, float min, float tau);
+    float run(float dt, float x, float x_c, bool update_integrator);
+    float run(float dt, float x, float x_c, bool update_integrator, float xdot);
+
+  private:
+    float kp_;
+    float ki_;
+    float kd_;
+
+    float max_;
+    float min_;
+
+    float integrator_;
+    float differentiator_;
+    float prev_x_;
+    float tau_;
   };
 
-  FsmState fsm_state_;
-  void process_errors();
+  ROSflight& RF_;
 
-  void update_leds();
+  turbomath::Vector run_pid_loops(uint32_t dt, const Estimator::State& state, const control_t& command, bool update_integrators);
+
+  Output output_;
+
+  PID roll_;
+  PID roll_rate_;
+  PID pitch_;
+  PID pitch_rate_;
+  PID yaw_rate_;
+
+  uint64_t prev_time_us_;
 };
 
 } // namespace rosflight_firmware
 
-#endif // ROSFLIGHT_FIRMWARE_STATE_MANAGER_H
+#endif // ROSFLIGHT_FIRMWARE_CONTROLLER_H
